@@ -1,0 +1,67 @@
+- name: Configure test server for PHP project
+  hosts: testserver
+  vars:
+    ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+  become: true
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Install apache and php packages
+      apt:
+        name:
+          - apache2
+          - php
+          - libapache2-mod-php
+          - php-cli
+          - php-mbstring
+          - php-xml
+        state: present
+
+    - name: Ensure apache is started and enabled
+      service:
+        name: apache2
+        state: started
+        enabled: yes
+
+    - name: Create web root directory
+      file:
+        path: /var/www/php-jenkins
+        state: directory
+        owner: www-data
+        group: www-data
+        mode: '0755'
+
+    - name: Copy simple index.php placeholder (if repo not yet copied)
+      copy:
+        dest: /var/www/php-jenkins/index.php
+        content: |
+          <?php
+          echo "PHP App deployed via Ansible";
+        owner: www-data
+        group: www-data
+        mode: '0644'
+
+    - name: Create Apache virtual host for project
+      copy:
+        dest: /etc/apache2/sites-available/php-jenkins.conf
+        content: |
+          <VirtualHost *:80>
+            ServerAdmin webmaster@localhost
+            DocumentRoot /var/www/php-jenkins
+            <Directory /var/www/php-jenkins>
+              AllowOverride All
+              Require all granted
+            </Directory>
+            ErrorLog ${APACHE_LOG_DIR}/php-jenkins-error.log
+            CustomLog ${APACHE_LOG_DIR}/php-jenkins-access.log combined
+          </VirtualHost>
+      notify: reload apache
+
+  handlers:
+    - name: reload apache
+      service:
+        name: apache2
+        state: reloaded

@@ -1,0 +1,27 @@
+FROM ubuntu:22.04
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y openssh-server sudo apache2 php libapache2-mod-php php-cli php-mbstring php-xml && \
+    mkdir /var/run/sshd
+
+# create ansible user and allow sudo without password (only for local lab)
+RUN useradd -m -s /bin/bash ansible && echo "ansible ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/ansible
+RUN mkdir -p /home/ansible/.ssh && chown -R ansible:ansible /home/ansible
+
+# Creează folder .ssh și permisiuni
+RUN mkdir -p /home/ansible/.ssh \
+    && chown ansible:ansible /home/ansible/.ssh \
+    && chmod 700 /home/ansible/.ssh
+
+# Copiază cheia publică a agentului Ansible
+COPY secrets/ansible_to_test_ssh_key.pub /home/ansible/.ssh/authorized_keys
+
+# Permisiuni corecte
+RUN chown ansible:ansible /home/ansible/.ssh/authorized_keys \
+    && chmod 600 /home/ansible/.ssh/authorized_keys
+
+RUN apt-get update && apt-get install -y rsync
+
+
+EXPOSE 22 80
+CMD ["/usr/sbin/sshd", "-D"]

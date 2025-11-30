@@ -1,0 +1,39 @@
+FROM ubuntu:22.04
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Instalează pachete necesare
+RUN apt-get update && apt-get install -y \
+    openssh-server \
+    python3 python3-pip \
+    git sshpass \
+    openjdk-17-jdk \
+    php-cli php-xml php-mbstring unzip curl \
+    && pip3 install --no-cache-dir ansible \
+    && mkdir /var/run/sshd
+
+# Instalează Composer
+RUN curl -sS https://getcomposer.org/installer | php \
+    && mv composer.phar /usr/local/bin/composer \
+    && chmod +x /usr/local/bin/composer
+
+# Creează user jenkins
+RUN useradd -m -s /bin/bash jenkins
+
+# Creează folder .ssh și permisiuni
+RUN mkdir -p /home/jenkins/.ssh \
+    && chown -R jenkins:jenkins /home/jenkins/.ssh \
+    && chmod 700 /home/jenkins/.ssh
+
+# Copiază cheia publică a agentului Jenkins
+COPY secrets/ansible_agent_ssh_key.pub /home/jenkins/.ssh/authorized_keys
+
+# Permisiuni corecte
+RUN chown jenkins:jenkins /home/jenkins/.ssh/authorized_keys \
+    && chmod 600 /home/jenkins/.ssh/authorized_keys
+
+# Copiază fișierul ansible.cfg pentru dezactivarea verificării cheilor SSH
+COPY ansible/ansible.cfg /etc/ansible/ansible.cfg
+
+EXPOSE 22
+
+CMD ["/usr/sbin/sshd","-D"]
