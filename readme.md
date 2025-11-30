@@ -405,7 +405,7 @@ Pipeline-ul include următoarele etape:
 
 2. Executarea playbook-ului Ansible pentru configurarea serverului de test.
 
-![php_setup_pipeline](./images/image01.png)
+![php_setup_pipeline](./images/image02.png)
 
 ### Pipeline pentru Deploy-ul Proiectului PHP pe Serverul de Test
 
