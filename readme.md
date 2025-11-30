@@ -303,7 +303,7 @@ Am creat un playbook Ansible `setup_test_server.yml` care execută următoarele 
         state: reloaded
 ```
 
-### Pipeline pentru Construirea și Testarea Proiectului PHP
+### 6. Pipeline pentru Construirea și Testarea Proiectului PHP
 
 Am creat un folder `pipelines`.
 
@@ -368,7 +368,7 @@ Pipeline-ul include următoarele etape:
 
 ![php_build_and_test_pipeline](./images/image01.png)
 
-### Pipeline pentru Configurarea Serverului de Test folosind Ansible
+### 7. Pipeline pentru Configurarea Serverului de Test folosind Ansible
 
 Am creat un pipeline Jenkins pentru configurarea serverului de test folosind agentul Ansible. Pentru aceasta, am creat un fișier `ansible_setup_pipeline.groovy` în folderul `pipelines`, cu următorul conținut: 
 
@@ -407,9 +407,9 @@ Pipeline-ul include următoarele etape:
 
 ![php_setup_pipeline](./images/image02.png)
 
-### Pipeline pentru Deploy-ul Proiectului PHP pe Serverul de Test
+### 8. Pipeline pentru Deploy-ul Proiectului PHP pe Serverul de Test
 
-Am creat un pipeline Jenkins pentru deploy-ul proiectului PHP pe serverul de test. Pentru aceasta, am creat un fișier `php_deploy_pipeline.groovy` în folderul p`ipelines`, cu următorul conținut: 
+Am creat un pipeline Jenkins pentru deploy-ul proiectului PHP pe serverul de test. Pentru aceasta, am creat un fișier `php_deploy_pipeline.groovy` în folderul `pipelines`, cu următorul conținut: 
 
 ```groovy
 pipeline {
@@ -446,13 +446,13 @@ Pipeline-ul include următoarele etape:
 
 ![php_project](./images/image03.png)
 
-### Testarea Proiectului PHP
+### 9. Testarea Proiectului PHP
 
 Am deschis un browser web și am navigat la adresa serverului de test pentru a mă asigura că proiectul PHP a fost lansat cu succes și funcționează corect.
 
 ![php_deploy_pipeline](./images/image04.png)
 
-### Crearea raportului
+### 10. Crearea raportului
 
 Am creat în directorul `lab05` fișierul `readme.md` care conține descrierea pas cu pas a executării proiectului.
 
